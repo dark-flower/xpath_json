@@ -1,0 +1,53 @@
+{
+  domain: "skechers.com",
+
+  search: {
+    url: 'https://www.skechers.com/search/?q={{query}}&search-button=&lang=en_US',
+    scrape: {
+      resultContainer: './/div[contains(@class,"rfk-product-tile")]',
+      cost: ".//span[@class='sales']/span/text()",
+      image: ".//div[contains(@class,'image-container')]//picture/img/@src",
+      title: ".//div[@class='pdp-link c-product-tile__title__wrap']//text()",
+      URL: ".//div[@class='pdp-link c-product-tile__title__wrap']/a/@href",
+    }
+  },
+
+  product: {
+    title: "//h1[@data-test='product-title']/text()",
+    subtitle: "//h2[@data-test='product-sub-title']/text()",
+    cost: "//div[@class='product-price__wrapper css-13hq5b3']/div/text()",
+    delivery: "//div[@id='shippingPickup']//text()",
+    brand: "//a[@data-path='home']/@data-brand",
+    //condition: "//div[@data-auto-id='product-information']//span[@class='gl-product-condition']",
+    availability: "substring-before(substring-after(//script[@type='application/ld+json'],'availability\": \"'),'\"')",
+    //barcode: "",
+    mpn: "//div[@class='colorway-images-wrapper']//div//input/@data-style-color"
+  },
+
+  productPaths: [
+    /\/(.+)\/([^\/]+?)\/(?<identifier>[\w+]+)\.html/,
+  ],
+
+  exampleProductPages: [{
+      "url": "https://www.nike.com/t/dunk-high-big-kids-shoes-s8TQL9/DB2179-106",
+      "cost": "$100",
+      //"barcode": 194812591365,
+      "brand": "Nike",
+      "title": "Nike Dunk High",
+      "subtitle": "Big Kids' Shoes",
+    },
+    {
+      "kind": "product",
+      "availability": "https://schema.org/InStock",
+      "cost": {
+        "currency": "USD",
+        "retailer": 105
+      },
+      "brand": "Nike",
+      "title": "Nike Dunk High SE",
+      "subtitle": "Big Kids' Shoes",
+      "url": "https://www.nike.com/t/dunk-high-se-big-kids-shoes-4FGHnK/DH9750-001"
+    }
+
+  ]
+}
