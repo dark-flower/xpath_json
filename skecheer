@@ -13,15 +13,14 @@
   },
 
   product: {
-    title: "//h1[@data-test='product-title']/text()",
-    subtitle: "//h2[@data-test='product-sub-title']/text()",
-    cost: "//div[@class='product-price__wrapper css-13hq5b3']/div/text()",
+    title: "//h1[@data-test='c-product-details__product-name product-name']/text()",
+    cost: "//span[@class='sales']/span/text()",
     delivery: "//div[@id='shippingPickup']//text()",
-    brand: "//a[@data-path='home']/@data-brand",
+    brand: "substring-after('brand_name:','')",
     //condition: "//div[@data-auto-id='product-information']//span[@class='gl-product-condition']",
-    availability: "substring-before(substring-after(//script[@type='application/ld+json'],'availability\": \"'),'\"')",
-    //barcode: "",
-    mpn: "//div[@class='colorway-images-wrapper']//div//input/@data-style-color"
+    availability: "substring-after('in_stock: "','')",
+    barcode: "substring-after('upc: "','')",
+    mpn: "substring-after('"mpn":"','')",
   },
 
   productPaths: [
@@ -29,24 +28,22 @@
   ],
 
   exampleProductPages: [{
-      "url": "https://www.nike.com/t/dunk-high-big-kids-shoes-s8TQL9/DB2179-106",
-      "cost": "$100",
-      //"barcode": 194812591365,
-      "brand": "Nike",
-      "title": "Nike Dunk High",
-      "subtitle": "Big Kids' Shoes",
+      "url": "https://www.skechers.com/men/shoes/skechers-slip-ins-ultra-flex-3.0---smooth-step/232450_BBK.html",
+      "cost": "$90",
+      "barcode": "N/A",
+      "brand": "Skechers",
+      "title": "Skechers Slip-ins: Ultra Flex 3.0 - Smooth Step",
     },
     {
       "kind": "product",
-      "availability": "https://schema.org/InStock",
+      "availability": "true",
       "cost": {
         "currency": "USD",
-        "retailer": 105
+        "retailer": 26.99
       },
-      "brand": "Nike",
-      "title": "Nike Dunk High SE",
-      "subtitle": "Big Kids' Shoes",
-      "url": "https://www.nike.com/t/dunk-high-se-big-kids-shoes-4FGHnK/DH9750-001"
+      "brand": "Skechers",
+      "title": "Foamies: Bay Breeze - Wild Kitten",
+      "url": "https://www.skechers.com/women/shoes/foamies-bay-breeze---wild-kitten/111217_TAN.html"
     }
 
   ]
