@@ -1,0 +1,51 @@
+{
+  domain: "sephora.com",
+
+  search: {
+    url: 'https://www.sephora.com/api/catalog/search?type=keyword&content=true&includeRegionsMap=true&targetSearchEngine=nlp&countryCode=US&q={{query}}',
+    scrape: {
+      resultContainer: 'repsonse["products"]',
+      cost: "resultContainer['salePrice']",
+      image: "resultContainer['heroImage']",
+      title: "resultContainer['currentSku']['imageAltText']",
+      URL: "resultContainer['url']",
+      Brand: "resultContainer['brandName']",
+    }
+  },
+
+  product: {
+    title: "//h1[@data-comp='DisplayName StyledComponent BaseComponent ']//text()",
+    cost: "//p[@class='Price']/span/span[1]/text()",
+    delivery: "//label[@data-comp='Checkbox StyledComponent BaseComponent ']//text()",
+    //brand: "substring-after('brand_name:','')",
+    //condition: "//div[@data-auto-id='product-information']//span[@class='gl-product-condition']",
+    availability: "substring-after('availability":"','')",
+    //barcode: "substring-after('upc: "','')",
+    //mpn: "substring-after('"mpn":"','')",
+  },
+
+  productPaths: [
+    /\/(.+)\/([^\/]+?)\/(?<identifier>[\w+]+)\.html/,
+  ],
+
+  exampleProductPages: [{
+      "url": "https://www.sephora.com/product/colorful-shadow-P430932?skuId=2372225",
+      "cost": "$9.00",
+      "barcode": "N/A",
+      "brand": "SEPHORA COLLECTION",
+      "title": "Colorful Eyeshadow",
+    },
+    {
+      "kind": "product",
+      "availability": "http://schema.org/OutOfStock",
+      "cost": {
+        "currency": "USD",
+        "retailer": 32.00
+      },
+      "brand": "PATRICK TA",
+      "title": "Major Beauty Headlines - Matte Suede Lipstick",
+      "url": "https://www.sephora.com/product/patrick-ta-major-headlines-matte-suede-lipstick-P458748?skuId=2363695"
+    }
+
+  ]
+}
