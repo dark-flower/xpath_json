@@ -1,5 +1,5 @@
 {
-  domain: "bhphotovideo.com,
+  domain: "bhphotovideo.com",
 
   search: {
     url: 'https://www.bhphotovideo.com/c/search?q={{query}}&sts=ma',
