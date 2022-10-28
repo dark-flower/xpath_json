@@ -1,6 +1,15 @@
 import requests
 from lxml import etree
 import re
+import pymysql
+sqldb = pymysql.connect(
+    host='127.0.0.1',
+    port=3306,
+    user='root',
+    password='irsjax123',
+    database='larry',
+)
+cursor = sqldb.cursor()
 cookies = {
     '__cf_bm': 'Gab0_Riv5evxyqQ1MfzuqxYE8s74jDK8XmOAvS1gFG0-1666788421-0-Afe8pWb0i+26s+1aww9NQA0IqznAREfpnzMgPyaGBlGK+iwvbC2NIs9VSbmbeLSJVNrbRxZzysvDo1BKCHrOSBw=',
     'geckoTableFdvStats': 'false',
@@ -59,58 +68,90 @@ def sub_string(content,start,end):
     except:
         return ""
     return _str
+# for i in (1,11):
+#     print("第"+str(i)+"页")
 params = {
     'page': '2',
 }
-
+suffix="insert into coingecko_demo  values "
 response = requests.get('https://www.coingecko.com/', params=params, cookies=cookies, headers=headers).text
 html=etree.HTML(response)
 
 list=html.xpath('.//tbody/tr')
 for item in list:
     print(item)
-    coin_full_name=item.xpath('.//div[@class="tw-flex-auto"]/a/span[1]/text()')[0].strip()
+    coin_full_name=item.xpath('.//div[@class="tw-flex-auto"]/a/span[1]/text()')[0].strip().replace("'","")
     coin_name=item.xpath('.//div[@class="tw-flex-auto"]/a/span[2]/text()')[0].strip()
     coin_icon=item.xpath('.//td[contains(@class,"coin-name")]//img/@src')[0].strip()
     coin_detail_url="https://www.coingecko.com"+item.xpath('.//a/@href')[0].strip()
     detail_page=requests.get(coin_detail_url,headers=headers,cookies=cookies).text
     detail_html=etree.HTML(detail_page)
-    Website=','.join([x.strip() for x in
+    Website='|'.join([x.strip() for x in
                detail_html.xpath(
                    './/div[contains(@data-target,"coins-information")]//span[contains(text(),"Website")]/parent::*//text()')
-               if x.strip() != '']).replace("Website,","")
-    Explorers = ','.join([x.strip() for x in
+               if x.strip() != '']).replace("Website|","").replace("'","")
+
+    try:
+        whiter_paper_link=detail_html.xpath('.//div[contains(@data-target,"coins-information")]//a[contains(text(),"Whitepaper")]/@href')[0]
+    except:
+        whiter_paper_link=""
+
+
+    Explorers = '|'.join([x.strip() for x in
                detail_html.xpath(
                    './/div[contains(@data-target,"coins-information")]//span[contains(text(),"Explorers")]/parent::*//text()')
-               if x.strip() != '']).replace("Explorers,","")
+               if x.strip() != '']).replace("Explorers|","").replace("'","")
 
-    Wallet = ','.join([x.strip() for x in
+    Wallet = '|'.join([x.strip() for x in
                           detail_html.xpath(
                               './/div[contains(@data-target,"coins-information")]//span[contains(text(),"Wallets")]/parent::*//text()')
-                          if x.strip() != '']).replace("Wallets,", "")
+                          if x.strip() != '']).replace("Wallets|", "").replace("'","")
 
-    Community = ','.join([x.strip() for x in
+    Community = '|'.join([x.strip() for x in
                        detail_html.xpath(
                            './/div[contains(@data-target,"coins-information")]//span[contains(text(),"Community")]/parent::*//a/@href')
-                       if x.strip() != '']).replace("Community,", "")
+                       if x.strip() != '']).replace("Community|", "").replace("'","")
 
-    Search = ','.join([x.strip() for x in
+    Search = '|'.join([x.strip() for x in
                           detail_html.xpath(
                               './/div[contains(@data-target,"coins-information")]//span[contains(text(),"Search on")]/parent::*//text()')
-                          if x.strip() != '']).replace("Search on,", "")
+                          if x.strip() != '']).replace("Search on|", "").replace("'","")
 
-    github_link = ','.join([x.strip() for x in
+    github_link = '|'.join([x.strip() for x in
                        detail_html.xpath(
                            './/div[contains(@data-target,"coins-information")]//span[contains(text(),"Source Code")]/parent::*//a/@href')
-                       if x.strip() != '']).replace("Source Code,", "")
+                       if x.strip() != '']).replace("Source Code|", "").replace("'","")
 
-    api_id = ','.join([x.strip() for x in
+    api_id = '|'.join([x.strip() for x in
                             detail_html.xpath(
                                 './/div[contains(@data-target,"coins-information")]//span[contains(text(),"API id")]/parent::*//text()')
-                            if x.strip() != '']).replace("API id,", "")
+                            if x.strip() != '']).replace("API id|", "").replace("'","")
 
-    tags = ','.join([x.strip() for x in
+    tags = '|'.join([x.strip() for x in
                             detail_html.xpath(
                                 './/div[contains(@data-target,"coins-information")]//span[contains(text(),"Tags")]/parent::*//text()')
-                            if x.strip() != '']).replace("Tags,", "")
-    print(1)
+                            if x.strip() != '']).replace("Tags|", "").replace("'","")
+
+    try:
+        security_link_part=detail_html.xpath('.//a[@data-event-category="click-coin-security-tab"]/@data-url')[0]
+    except:
+        security_link_part=""
+        security_score=""
+        onboarded_info=""
+        audit_link=""
+    if security_link_part!="":
+        security_link = 'https://www.coingecko.com' + security_link_part
+        security_page=requests.get(security_link,headers=headers,cookies=cookies).text
+        security_html=etree.HTML(security_page)
+        Security_score=security_html.xpath('.//div[contains(text(),"Security Score")]/text()')[0]
+        onboarded_info=security_html.xpath('.//div[contains(text(),"Onboarded")]/text()')[0]
+        audit_link=security_html.xpath('.//div[contains(text(),"Audit Report")]/@href')[0]
+
+
+
+    values = " ('" + coin_full_name + "','" +coin_name + "','" +coin_icon + "','" +coin_detail_url + "','" +Website + "','" +Explorers + "','" +Wallet + "','" +Community  + "','" +Search + "','" +github_link + "','" +api_id + "','" +tags+ "')"
+    sql = suffix + values
+    print(sql)
+    cursor.execute(sql)
+    sqldb.commit()
+
