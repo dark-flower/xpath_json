@@ -1,0 +1,50 @@
+from lxml import  etree
+import requests
+
+import requests
+
+cookies = {
+    'hoveredProductsNav': 'true',
+    'clickedGeckoGuideModal': 'true',
+    'geckoGuideModalVersion': '12',
+    'displayUnconvertData': 'false',
+    'cookie_notice_accept': '1',
+    'geckoTableFdvStats': 'false',
+    'hoveredProductsNav': 'true',
+    '_session_id': 'd6831c5a0c8c36abfe5ff929abe78b98',
+    '_gid': 'GA1.2.1777546910.1667180925',
+    '__atuvc': '2%7C43%2C1%7C44',
+    '_ga': 'GA1.2.1004588217.1666184163',
+    'datadome': 'CZFzOK3833rJMkl11zkBnBYOr0m8U8iyp_L1qz9Hq8Lx.t1KF2AumMLFSct7BjvK8t3MV8C.IJh2sGtwDJ_Tp0LviyWNxjiPxUNSg-ZIKqlhq5QRb7RvPF1u6jPPuDi',
+    '_ga_LJR3232ZPB': 'GS1.1.1667199589.9.1.1667199596.0.0.0',
+    '__cf_bm': 'nAzdHU_acQZIzLueejS2dB7n.RldEizQx.H1E_3d5.U-1667200644-0-AcZrI4vKhO412YRMiCivOqLpMF095Hz0adTNpFImrKfzNau7ec4Q203b7wNmgSaoVSjXC0+kPzLg54ADUpCh8Xs=',
+}
+
+headers = {
+    'authority': 'www.coingecko.com',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ja;q=0.5,de;q=0.4',
+    # Requests sorts cookies= alphabetically
+    # 'cookie': 'hoveredProductsNav=true; clickedGeckoGuideModal=true; geckoGuideModalVersion=12; displayUnconvertData=false; cookie_notice_accept=1; geckoTableFdvStats=false; hoveredProductsNav=true; _session_id=d6831c5a0c8c36abfe5ff929abe78b98; _gid=GA1.2.1777546910.1667180925; __atuvc=2%7C43%2C1%7C44; _ga=GA1.2.1004588217.1666184163; datadome=CZFzOK3833rJMkl11zkBnBYOr0m8U8iyp_L1qz9Hq8Lx.t1KF2AumMLFSct7BjvK8t3MV8C.IJh2sGtwDJ_Tp0LviyWNxjiPxUNSg-ZIKqlhq5QRb7RvPF1u6jPPuDi; _ga_LJR3232ZPB=GS1.1.1667199589.9.1.1667199596.0.0.0; __cf_bm=nAzdHU_acQZIzLueejS2dB7n.RldEizQx.H1E_3d5.U-1667200644-0-AcZrI4vKhO412YRMiCivOqLpMF095Hz0adTNpFImrKfzNau7ec4Q203b7wNmgSaoVSjXC0+kPzLg54ADUpCh8Xs=',
+    'sec-ch-ua': '"Chromium";v="106", "Microsoft Edge";v="106", "Not;A=Brand";v="99"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'none',
+    'sec-fetch-user': '?1',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.52',
+}
+
+response = requests.get('https://www.coingecko.com/en/coins/bnb', cookies=cookies, headers=headers).text
+html=etree.HTML(response)
+price=html.xpath('.//span[@data-coin-id="825"]/text()')[0]
+cap_price=html.xpath('.//span[contains(text(),"Market Cap") and not(contains(text(),"FDA"))]/following-sibling::span//text()')
+circulating_supply =html.xpath('.//span[contains(text(),"Circulating Supply")]/following-sibling::span//text()')[0].strip()
+trading_vol_24h =''.join([x.strip() for x in html.xpath('.//span[contains(text(),"Hour Trading Vol")]/parent::*//text()') if x.strip() != '' and '$' in x.strip()])
+total_supply =html.xpath('.//span[contains(text(),"Total Supply")]/following-sibling::span//text()')[0].strip()
+fully_diluted_val =html.xpath('.//span[contains(text(),"Fully Diluted Valuation")]/following-sibling::span//text()')[0].strip()
+max_supply =html.xpath('.//span[contains(text(),"Max Supply")]/following-sibling::span/text()')[0].strip()
+max_supply =html.xpath('.//div[contains(text(),"Rank #")]//text()')[0].strip()
+print(1)
