@@ -1,0 +1,75 @@
+import requests
+import pandas as pd
+from lxml import etree
+from sqlalchemy import create_engine
+from urllib import parse
+password = parse.quote_plus(r'irsjax123')
+engine = create_engine('mysql+pymysql://root:%s@127.0.0.1:3306/upwork' % password)
+cookies = {
+    'udstatistics': '7626622023406433',
+    'udstatisticss': '468606586038248',
+    'pvFirst': '1669983499',
+    'Hm_lvt_87035a00e917f0eee43e4967b495f7c9': '1669983499,1670059605',
+    '_ga': 'GA1.2.1906580455.1670062349',
+    '_gid': 'GA1.2.1907610133.1670062349',
+    'acw_tc': '7d4d8eaa16701553277101739e32e7487656e7695ecc8c4e4069e1d755',
+    'truckhometicssid': '1178327657748417',
+    'sensorsdata2015jssdkcross': '%7B%22distinct_id%22%3A%22468606586038248%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%2C%22%24latest_landing_page%22%3A%22https%3A%2F%2Fproduct.360che.com%2Fprice%2Fc13_s123_b0_s0_c3.html%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg0ZDJjNWYxYTk1OWItMGI0NjI5YjdmMGQ0NjI4LTdkNWQ1NDc2LTkyMTYwMC0xODRkMmM1ZjFhYTc4MyJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%22184d2c5f1a959b-0b4629b7f0d4628-7d5d5476-921600-184d2c5f1aa783%22%7D',
+    '_gat_head': '1',
+    'pvLast': '1670156721',
+    'Hm_lpvt_87035a00e917f0eee43e4967b495f7c9': '1670156721',
+}
+
+headers = {
+    'authority': 'product.360che.com',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ja;q=0.5,de;q=0.4,es;q=0.3',
+    'cache-control': 'no-cache',
+    # 'cookie': 'udstatistics=7626622023406433; udstatisticss=468606586038248; pvFirst=1669983499; Hm_lvt_87035a00e917f0eee43e4967b495f7c9=1669983499,1670059605; _ga=GA1.2.1906580455.1670062349; _gid=GA1.2.1907610133.1670062349; acw_tc=7d4d8eaa16701553277101739e32e7487656e7695ecc8c4e4069e1d755; truckhometicssid=1178327657748417; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22468606586038248%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%2C%22%24latest_landing_page%22%3A%22https%3A%2F%2Fproduct.360che.com%2Fprice%2Fc13_s123_b0_s0_c3.html%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg0ZDJjNWYxYTk1OWItMGI0NjI5YjdmMGQ0NjI4LTdkNWQ1NDc2LTkyMTYwMC0xODRkMmM1ZjFhYTc4MyJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%22184d2c5f1a959b-0b4629b7f0d4628-7d5d5476-921600-184d2c5f1aa783%22%7D; _gat_head=1; pvLast=1670156721; Hm_lpvt_87035a00e917f0eee43e4967b495f7c9=1670156721',
+    'pragma': 'no-cache',
+    'referer': 'https://product.360che.com/price/c13_s123_b0_s0.html',
+    'sec-ch-ua': '"Microsoft Edge";v="107", "Chromium";v="107", "Not=A?Brand";v="24"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-user': '?1',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62',
+}
+for i in range(1,4):
+    response = requests.get('https://product.360che.com/price/c13_s155_b0_s0_c'+str(i)+'.html', cookies=cookies, headers=headers).text
+    html=etree.HTML(response)
+    item_list=html.xpath('.//ul[@class="products-list"]/li')
+    for item in item_list:
+        detail_url='https://product.360che.com/'+item.xpath(".//a[text()='配置']/@href")[0]
+        detail_page = requests.get(detail_url, cookies=cookies, headers=headers).text
+        detail_html = etree.HTML(detail_page)
+        model_id_list = detail_html.xpath('.//div/span[@data-pname="公告型号"]/@data-oname')
+        GVWR_list = detail_html.xpath('.//div/span[@data-pname="总质量"]/@data-oname')
+        estimated_payload = detail_html.xpath('.//div/span[@data-pname="额定载重"]/@data-oname')
+        battery_capacity=detail_html.xpath('.//td[contains(text(),"电池容量：")]/..//span/@data-oname')
+        battery_chemistry=detail_html.xpath('.//td[contains(text(),"电池类型：")]/..//span/@data-oname')
+        maximum_zero_emission_range=detail_html.xpath('.//td[contains(text(),"厂标续航：")]/..//span/@data-oname')
+        motor_power=detail_html.xpath('.//td[contains(text(),"额定功率：")]/..//span/@data-oname')
+        peak_motor_power=detail_html.xpath('.//td[contains(text(),"峰值功率：")]/..//span/@data-oname')
+        motor_torque=detail_html.xpath('.//td[contains(text(),"电机额定扭矩：")]/..//span/@data-oname')
+        peak_motor_torque=detail_html.xpath('.//td[contains(text(),"峰值扭矩：")]/..//span/@data-oname')
+
+
+        c = {
+            "model_id": model_id_list,
+            "GVWR": GVWR_list,
+            "estimated_payload": estimated_payload,
+            "battery_capacity": battery_capacity,
+            "battery_chemistry": battery_chemistry,
+            "maximum_zero_emission_range": maximum_zero_emission_range,
+            "motor_power": motor_power,
+            "peak_motor_power": peak_motor_power,
+            "motor_torque": motor_torque,
+            "peak_motor_torque": peak_motor_torque,
+        }
+        data=pd.DataFrame.from_dict(c, orient='index').fillna('').T
+        data.to_sql('car_test', engine, index=False, if_exists='append')
+        print(1)
