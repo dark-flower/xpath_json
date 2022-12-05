@@ -38,38 +38,43 @@ headers = {
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62',
 }
-for i in range(1,4):
-    response = requests.get('https://product.360che.com/price/c13_s155_b0_s0_c'+str(i)+'.html', cookies=cookies, headers=headers).text
-    html=etree.HTML(response)
-    item_list=html.xpath('.//ul[@class="products-list"]/li')
-    for item in item_list:
-        detail_url='https://product.360che.com/'+item.xpath(".//a[text()='配置']/@href")[0]
-        detail_page = requests.get(detail_url, cookies=cookies, headers=headers).text
-        detail_html = etree.HTML(detail_page)
-        model_id_list = detail_html.xpath('.//div/span[@data-pname="公告型号"]/@data-oname')
-        GVWR_list = detail_html.xpath('.//div/span[@data-pname="总质量"]/@data-oname')
-        estimated_payload = detail_html.xpath('.//div/span[@data-pname="额定载重"]/@data-oname')
-        battery_capacity=detail_html.xpath('.//td[contains(text(),"电池容量：")]/..//span/@data-oname')
-        battery_chemistry=detail_html.xpath('.//td[contains(text(),"电池类型：")]/..//span/@data-oname')
-        maximum_zero_emission_range=detail_html.xpath('.//td[contains(text(),"厂标续航：")]/..//span/@data-oname')
-        motor_power=detail_html.xpath('.//td[contains(text(),"额定功率：")]/..//span/@data-oname')
-        peak_motor_power=detail_html.xpath('.//td[contains(text(),"峰值功率：")]/..//span/@data-oname')
-        motor_torque=detail_html.xpath('.//td[contains(text(),"电机额定扭矩：")]/..//span/@data-oname')
-        peak_motor_torque=detail_html.xpath('.//td[contains(text(),"峰值扭矩：")]/..//span/@data-oname')
+task_list=['155|4','154|7','143|4','140|5','124|11','123|15']
+for task in task_list:
+    type=task.split("|")[0]
+    page_num=task.split("|")[1]
+    for i in range(1,int(page_num)):
+
+        response = requests.get('https://product.360che.com/price/c13_s'+str(type)+'_b0_s0_c'+str(i)+'.html', cookies=cookies, headers=headers).text
+        html=etree.HTML(response)
+        item_list=html.xpath('.//ul[@class="products-list"]/li')
+        for item in item_list:
+            detail_url='https://product.360che.com/'+item.xpath(".//a[text()='配置']/@href")[0]
+            detail_page = requests.get(detail_url, cookies=cookies, headers=headers).text
+            detail_html = etree.HTML(detail_page)
+            model_id_list = detail_html.xpath('.//div/span[@data-pname="公告型号"]/@data-oname')
+            GVWR_list = detail_html.xpath('.//div/span[@data-pname="总质量"]/@data-oname')
+            estimated_payload = detail_html.xpath('.//div/span[@data-pname="额定载重"]/@data-oname')
+            battery_capacity=detail_html.xpath('.//td[contains(text(),"电池容量：")]/..//span/@data-oname')
+            battery_chemistry=detail_html.xpath('.//td[contains(text(),"电池类型：")]/..//span/@data-oname')
+            maximum_zero_emission_range=detail_html.xpath('.//td[contains(text(),"厂标续航：")]/..//span/@data-oname')
+            motor_power=detail_html.xpath('.//td[contains(text(),"额定功率：")]/..//span/@data-oname')
+            peak_motor_power=detail_html.xpath('.//td[contains(text(),"峰值功率：")]/..//span/@data-oname')
+            motor_torque=detail_html.xpath('.//td[contains(text(),"电机额定扭矩：")]/..//span/@data-oname')
+            peak_motor_torque=detail_html.xpath('.//td[contains(text(),"峰值扭矩：")]/..//span/@data-oname')
 
 
-        c = {
-            "model_id": model_id_list,
-            "GVWR": GVWR_list,
-            "estimated_payload": estimated_payload,
-            "battery_capacity": battery_capacity,
-            "battery_chemistry": battery_chemistry,
-            "maximum_zero_emission_range": maximum_zero_emission_range,
-            "motor_power": motor_power,
-            "peak_motor_power": peak_motor_power,
-            "motor_torque": motor_torque,
-            "peak_motor_torque": peak_motor_torque,
-        }
-        data=pd.DataFrame.from_dict(c, orient='index').fillna('').T
-        data.to_sql('car_test', engine, index=False, if_exists='append')
-        print(1)
+            c = {
+                "model_id": model_id_list,
+                "GVWR": GVWR_list,
+                "estimated_payload": estimated_payload,
+                "battery_capacity": battery_capacity,
+                "battery_chemistry": battery_chemistry,
+                "maximum_zero_emission_range": maximum_zero_emission_range,
+                "motor_power": motor_power,
+                "peak_motor_power": peak_motor_power,
+                "motor_torque": motor_torque,
+                "peak_motor_torque": peak_motor_torque,
+            }
+            data=pd.DataFrame.from_dict(c, orient='index').fillna('').T
+            data.to_sql('car_test', engine, index=False, if_exists='append')
+            print(1)
