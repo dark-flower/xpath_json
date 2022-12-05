@@ -52,6 +52,7 @@ for task in task_list:
             detail_page = requests.get(detail_url, cookies=cookies, headers=headers).text
             detail_html = etree.HTML(detail_page)
             model_id_list = detail_html.xpath('.//div/span[@data-pname="公告型号"]/@data-oname')
+            title_list = detail_html.xpath('.//div[@class="title-bar"]//h5/a/text()')
             GVWR_list = detail_html.xpath('.//div/span[@data-pname="总质量"]/@data-oname')
             estimated_payload = detail_html.xpath('.//div/span[@data-pname="额定载重"]/@data-oname')
             battery_capacity=detail_html.xpath('.//td[contains(text(),"电池容量：")]/..//span/@data-oname')
