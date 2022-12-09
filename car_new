@@ -1,0 +1,89 @@
+import requests
+import pandas as pd
+from lxml import etree
+from sqlalchemy import create_engine
+from urllib import parse
+password = parse.quote_plus(r'irsjax123')
+engine = create_engine('mysql+pymysql://root:%s@127.0.0.1:3306/upwork' % password)
+cookies = {
+    'udstatistics': '6590539699523235',
+    'udstatisticss': '7587964535955474',
+    'pvFirst': '1670208041',
+    '_ga': 'GA1.2.1156375749.1670228575',
+    'Hm_lvt_87035a00e917f0eee43e4967b495f7c9': '1670208042,1670575476',
+    '_gid': 'GA1.2.2053082255.1670578353',
+    'sensorsdata2015jssdkcross': '%7B%22distinct_id%22%3A%227587964535955474%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%2C%22%24latest_landing_page%22%3A%22https%3A%2F%2Fwww.360che.com%2Ftech%2F210615%2F162775.html%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg0ZTAyODMxZGZhM2YtMDI3ZDVkYzJlNWE5OWQtN2Q1ZDU0NzEtOTIxNjAwLTE4NGUwMjgzMWUwYTBjIn0%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%22184e02831dfa3f-027d5dc2e5a99d-7d5d5471-921600-184e02831e0a0c%22%7D',
+    'Hm_lpvt_87035a00e917f0eee43e4967b495f7c9': '1670578705',
+    'pvLast': '1670578705',
+}
+
+headers = {
+    'authority': 'product.360che.com',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ja;q=0.5,de;q=0.4,es;q=0.3',
+    'cache-control': 'max-age=0',
+    # 'cookie': 'udstatistics=6590539699523235; udstatisticss=7587964535955474; pvFirst=1670208041; _ga=GA1.2.1156375749.1670228575; Hm_lvt_87035a00e917f0eee43e4967b495f7c9=1670208042,1670575476; _gid=GA1.2.2053082255.1670578353; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%227587964535955474%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%2C%22%24latest_landing_page%22%3A%22https%3A%2F%2Fwww.360che.com%2Ftech%2F210615%2F162775.html%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg0ZTAyODMxZGZhM2YtMDI3ZDVkYzJlNWE5OWQtN2Q1ZDU0NzEtOTIxNjAwLTE4NGUwMjgzMWUwYTBjIn0%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%22184e02831dfa3f-027d5dc2e5a99d-7d5d5471-921600-184e02831e0a0c%22%7D; Hm_lpvt_87035a00e917f0eee43e4967b495f7c9=1670578705; pvLast=1670578705',
+    'referer': 'https://product.360che.com/m273/68321_param.html',
+    'sec-ch-ua': '"Not?A_Brand";v="8", "Chromium";v="108", "Microsoft Edge";v="108"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-user': '?1',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.42',
+}
+
+response = requests.get('https://product.360che.com/BrandList.html', cookies=cookies, headers=headers).text
+html = etree.HTML(response)
+item_list = html.xpath('.//div[@class="xll_center2"]')
+for item in item_list:
+    print(item)
+    brand=item.xpath('.//div[@class="xll_center2_a1_y1"]/a/text()')[0]
+    sub_item_list=item.xpath('.//div[@class="xll_center2_a1_y2"]')
+    for sub_item in sub_item_list[1::]:
+        sub_href='https://product.360che.com/'+sub_item.xpath(".//dt/a/@href")[0]
+        sub_brand=sub_item.xpath(".//dt/a/text()")[0]
+        brand_status=sub_item.xpath(".//dt/span/text()")
+        if len(brand_status)==0:
+            print(sub_brand, sub_href)
+            details_content = requests.get(sub_href, cookies=cookies,headers=headers).text
+            details_content_html = etree.HTML(details_content)
+            detail_url='https://product.360che.com'+details_content_html.xpath(".//a[text()='参数配置']/@href")[0]
+
+            detail_page = requests.get(detail_url, cookies=cookies, headers=headers).text
+            detail_html = etree.HTML(detail_page)
+            model_id_list = detail_html.xpath('.//div/span[@data-pname="公告型号"]/@data-oname')
+            title_list = detail_html.xpath('.//div[@class="title-bar"]//h5/a/text()')
+            brand = [x.split(' ')[0] for x in title_list]
+            manufacturer = [x.split(' ')[0] for x in title_list]
+            model_name = [x.split(' ')[1] for x in title_list]
+            GVWR_list = detail_html.xpath('.//div/span[@data-pname="总质量"]/@data-oname')
+            estimated_payload = detail_html.xpath('.//div/span[@data-pname="额定载重"]/@data-oname')
+            battery_capacity = detail_html.xpath('.//td[contains(text(),"电池容量：")]/..//span/@data-oname')
+            battery_chemistry = detail_html.xpath('.//td[contains(text(),"电池类型：")]/..//span/@data-oname')
+            maximum_zero_emission_range = detail_html.xpath('.//td[contains(text(),"厂标续航：")]/..//span/@data-oname')
+            motor_power = detail_html.xpath('.//td[contains(text(),"额定功率：")]/..//span/@data-oname')
+            peak_motor_power = detail_html.xpath('.//td[contains(text(),"峰值功率：")]/..//span/@data-oname')
+            motor_torque = detail_html.xpath('.//td[contains(text(),"电机额定扭矩：")]/..//span/@data-oname')
+            peak_motor_torque = detail_html.xpath('.//td[contains(text(),"峰值扭矩：")]/..//span/@data-oname')
+
+            c = {
+                "brand": brand,
+                "manufacturer": manufacturer,
+                "model_name": model_name,
+                "model_id": model_id_list,
+                "GVWR": GVWR_list,
+                "estimated_payload": estimated_payload,
+                "battery_capacity": battery_capacity,
+                "battery_chemistry": battery_chemistry,
+                "maximum_zero_emission_range": maximum_zero_emission_range,
+                "motor_power": motor_power,
+                "peak_motor_power": peak_motor_power,
+                "motor_torque": motor_torque,
+                "peak_motor_torque": peak_motor_torque,
+            }
+            data = pd.DataFrame.from_dict(c, orient='index').fillna('').T
+            data.to_sql('car_test_new_1', engine, index=False, if_exists='append')
+            print(1)
